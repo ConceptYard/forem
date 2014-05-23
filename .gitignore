@@ -12,3 +12,6 @@ spec/dummy
 *.rbc
 *.tmproj
 Gemfile.lock
+
+# RubyMine project files
+.idea
