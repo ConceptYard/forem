@@ -7,6 +7,7 @@ gemspec
 gem 'pry-rails'
 gem 'pry-nav'
 gem 'select2-rails', '~> 3.5.4'
+gem 'active_model_serializers'
 
 platforms :jruby do
   gem "activerecord-jdbc-adapter", :require => false
@@ -15,7 +16,7 @@ end
 group :test do
   platforms :ruby, :mingw do
     gem "forem-redcarpet"
-    gem "mysql2"
+    #gem "mysql2"
     gem "pg"
     gem "sqlite3"
   end

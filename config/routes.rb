@@ -1,9 +1,14 @@
 Forem::Engine.routes.draw do
-  root :to => "forums#index"
+
+  root :to => "forums#index", format: true, defaults: { :format => 'html' }
 
   # resources :topics, :only => [:new, :create, :index, :show, :destroy] do
   #   resources :posts
   # end
+
+  get 'latest_posts', to: 'posts#latest_posts'
+
+  get 'post_count/:forum_id/:id', to: 'topics#post_count'
 
   resources :categories, :only => [:index, :show]
 

@@ -4,6 +4,8 @@ pkg/
 *.log
 .rvmrc
 .rbenv-version
+.ruby-gemset
+.ruby-version
 *.gem
 *.gems
 tmp
@@ -12,3 +14,6 @@ spec/dummy
 *.rbc
 *.tmproj
 Gemfile.lock
+
+# RubyMine project files
+.idea

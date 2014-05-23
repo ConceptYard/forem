@@ -1,7 +1,8 @@
 module Forem
   class PostsController < Forem::ApplicationController
-    before_filter :authenticate_forem_user, except: :show
-    before_filter :find_topic
+    #before_filter :authenticate_forem_user
+    before_filter :restrict_access!
+    before_filter :find_topic, except: [:latest_posts]
     before_filter :reject_locked_topic!, :only => [:create]
     before_filter :block_spammers, :only => [:new, :create]
     before_filter :authorize_reply_for_topic!, :only => [:new, :create]
@@ -32,10 +33,14 @@ module Forem
       @post = @topic.posts.build(post_params)
       @post.user = forem_user
 
-      if @post.save
-        create_successful
-      else
-        create_failed
+      respond_to do |format|
+        if @post.save
+          format.html { create_successful }
+          format.json { render json: { message: "Post created" } }
+        else
+          format.html { create_failed }
+          format.json { render json: { message: "Post failed" } }
+        end
       end
     end
 
@@ -43,16 +48,35 @@ module Forem
     end
 
     def update
-      if @post.owner_or_admin?(forem_user) && @post.update_attributes(post_params)
-        update_successful
-      else
-        update_failed
+      respond_to do |format|
+        if @post.owner_or_admin?(forem_user) && @post.update_attributes(post_params)
+          format.html { update_successful }
+          format.json { render json: { message: "Post updated" } }
+        else
+          format.html { update_failed }
+          format.json { render json: { message: "Updated failed" } }
+        end
       end
     end
 
     def destroy
-      @post.destroy
-      destroy_successful
+      respond_to do |format|
+        if @post.destroy
+          format.html { destroy_successful }
+          format.json { render json: { message: "Post deleted" } }
+        else
+          format.json { render json: { message: "Deletion failed" } }
+        end
+      end
+    end
+
+    def latest_posts
+      @posts = Forem::Post.all.limit(100).sort_by(&:updated_at).reverse
+      @paginated_posts = Kaminari.paginate_array(@posts).page(params[:page]).per(10)
+      respond_to do |format|
+        format.html
+        format.json { render json: @posts }
+      end
     end
 
     private

@@ -5,6 +5,11 @@ module Forem
 
     def index
       @categories = Forem::Category.all
+
+      respond_to do |format|
+        format.html
+        format.json {render json: @categories}
+      end
     end
 
     def show
@@ -25,6 +30,7 @@ module Forem
       respond_to do |format|
         format.html
         format.atom { render :layout => false }
+        format.json { render json: @topics}
       end
     end
 

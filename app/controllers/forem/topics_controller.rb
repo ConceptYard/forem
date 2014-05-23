@@ -1,7 +1,8 @@
 module Forem
   class TopicsController < Forem::ApplicationController
     helper 'forem/posts'
-    before_filter :authenticate_forem_user, :except => [:show]
+    #before_filter :authenticate_forem_user, :except => [:show]
+    before_filter :restrict_access!
     before_filter :find_forum
     before_filter :block_spammers, :only => [:new, :create]
 
@@ -11,7 +12,11 @@ module Forem
         @posts = find_posts(@topic)
 
         # Kaminari allows to configure the method and param used
-        @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
+        @posts = @posts.send(pagination_method, params[pagination_param]).per(10)
+        respond_to do |format|
+          format.html
+          format.json { render json: @posts }
+        end
       end
     end
 
@@ -24,35 +29,62 @@ module Forem
     def create
       authorize! :create_topic, @forum
       @topic = @forum.topics.build(topic_params)
-      @topic.user = forem_user
-      if @topic.save
-        create_successful
-      else
-        create_unsuccessful
+      @topic.user = forem_user || @current_user
+
+      respond_to do |format|
+        if @topic.save
+          format.html { create_successful }
+          format.json { render json: @topic }
+        else
+          format.html { create_unsuccessful }
+          format.json { render json: @topic.errors }
+        end
       end
     end
 
     def destroy
       @topic = @forum.topics.friendly.find(params[:id])
-      if forem_user == @topic.user || forem_user.forem_admin?
-        @topic.destroy
-        destroy_successful
-      else
-        destroy_unsuccessful
+      respond_to do |format|
+        if forem_user == @topic.user || forem_user.forem_admin?
+          if @topic.destroy
+            format.html { destroy_successful }
+            format.json { render json: {message: "Topic Deleted"} }
+          else
+            format.html { destroy_unsuccessful }
+            format.json { render json: @topic.errors }
+          end
+        end
       end
     end
 
     def subscribe
-      if find_topic
-        @topic.subscribe_user(forem_user.id)
-        subscribe_successful
+      respond_to do |format|
+        if find_topic
+          @topic.subscribe_user(forem_user.id)
+          format.html { subscribe_successful }
+          format.json { render json: {message: "Subscribed"} }
+        end
       end
     end
 
     def unsubscribe
+      respond_to do |format|
+        if find_topic
+          @topic.unsubscribe_user(forem_user.id)
+          format.html { unsubscribe_successful }
+          format.json { render json: {message: "Unsubscribed"} }
+        end
+      end
+    end
+
+    def post_count
       if find_topic
-        @topic.unsubscribe_user(forem_user.id)
-        unsubscribe_successful
+        count = find_posts(@topic).count
+      else
+        count = 0
+      end
+      respond_to do |format|
+        format.json { render json: {message: count} }
       end
     end
 
@@ -61,7 +93,7 @@ module Forem
     def topic_params
       params.require(:topic).permit(:subject, :posts_attributes => [[:text]])
     end
-    
+
     def create_successful
       redirect_to [@forum, @topic], :notice => t("forem.topic.created")
     end
@@ -124,8 +156,8 @@ module Forem
     def block_spammers
       if forem_user.forem_spammer?
         flash[:alert] = t('forem.general.flagged_for_spam') + ' ' +
-                        t('forem.general.cannot_create_topic')
-        redirect_to :back
+            t('forem.general.cannot_create_topic')
+        redirect_to :back and return
       end
     end
 
