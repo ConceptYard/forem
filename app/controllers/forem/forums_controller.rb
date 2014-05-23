@@ -25,7 +25,7 @@ module Forem
       respond_to do |format|
         format.html
         format.atom { render :layout => false }
-        format.json { render @forum}
+        format.json { render json: @forum}
       end
     end
 
