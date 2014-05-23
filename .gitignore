@@ -4,6 +4,7 @@ pkg/
 *.log
 .rvmrc
 .rbenv-version
+.ruby-gemset
 *.gem
 *.gems
 tmp
