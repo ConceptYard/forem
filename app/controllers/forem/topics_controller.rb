@@ -13,6 +13,11 @@ module Forem
         # Kaminari allows to configure the method and param used
         @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
       end
+
+      respond_to do |format|
+        format.html
+        format.json { render json: @posts}
+      end
     end
 
     def new
