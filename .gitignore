@@ -5,6 +5,7 @@ pkg/
 .rvmrc
 .rbenv-version
 .ruby-gemset
+.ruby-version
 *.gem
 *.gems
 tmp
