@@ -10,6 +10,8 @@ module Forem
     before_filter :ensure_post_ownership!, :only => [:destroy]
     before_filter :authorize_destroy_post_for_forum!, :only => [:destroy]
 
+    require 'will_paginate/array'
+
     def new
       @post = @topic.posts.build
       find_reply_to_post
