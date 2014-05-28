@@ -1,7 +1,7 @@
 module Forem
   class PostsController < Forem::ApplicationController
     before_filter :authenticate_forem_user
-    before_filter :find_topic
+    before_filter :find_topic, except: [:latest_posts]
     before_filter :reject_locked_topic!, :only => [:create]
     before_filter :block_spammers, :only => [:new, :create]
     before_filter :authorize_reply_for_topic!, :only => [:new, :create]
@@ -47,6 +47,14 @@ module Forem
     def destroy
       @post.destroy
       destroy_successful
+    end
+
+    def latest_posts
+      @posts = Forem::Post.all.sort_by(&:updated_at).reverse.paginate(:page => params[:page], :per_page => 5)
+      respond_to do |format|
+        format.html
+        format.json { render json: @posts }
+      end
     end
 
     private

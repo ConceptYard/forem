@@ -5,6 +5,8 @@ Forem::Engine.routes.draw do
   #   resources :posts
   # end
 
+  get 'latest_posts', to: 'posts#latest_posts'
+
   resources :categories, :only => [:index, :show]
 
   namespace :admin do
