@@ -30,7 +30,7 @@ module Forem
       respond_to do |format|
         format.html
         format.atom { render :layout => false }
-        format.json { render json: @forum}
+        format.json { render json: @topics}
       end
     end
 

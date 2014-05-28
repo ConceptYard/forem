@@ -1,5 +1,5 @@
 module Forem
   class CategorySerializer < ActiveModel::Serializer
-    attributes :id, :name, :description, :category_id, :views_count
+    attributes :id, :name, :slug
   end
 end
