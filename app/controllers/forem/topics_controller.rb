@@ -45,11 +45,16 @@ module Forem
 
     def destroy
       @topic = @forum.topics.friendly.find(params[:id])
-      if forem_user == @topic.user || forem_user.forem_admin?
-        @topic.destroy
-        destroy_successful
-      else
-        destroy_unsuccessful
+      respond_to do |format|
+        if forem_user == @topic.user || forem_user.forem_admin?
+          if @topic.destroy
+            format.html { destroy_successful }
+            format.json { render json: { message: "Topic Deleted" } }
+          else
+            format.html { destroy_unsuccessful }
+            format.json { render json: @topic.errors }
+          end
+        end
       end
     end
 
