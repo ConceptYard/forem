@@ -1,7 +1,8 @@
 module Forem
   class TopicsController < Forem::ApplicationController
     helper 'forem/posts'
-    before_filter :authenticate_forem_user, :except => [:show]
+    #before_filter :authenticate_forem_user, :except => [:show]
+    before_filter :restrict_access!
     before_filter :find_forum
     before_filter :block_spammers, :only => [:new, :create]
 
@@ -29,11 +30,16 @@ module Forem
     def create
       authorize! :create_topic, @forum
       @topic = @forum.topics.build(topic_params)
-      @topic.user = forem_user
-      if @topic.save
-        create_successful
-      else
-        create_unsuccessful
+      @topic.user = forem_user || @current_user
+
+      respond_to do |format|
+        if @topic.save
+          format.html { create_successful }
+          format.json { render json: @topic }
+        else
+          format.html { create_unsuccessful }
+          format.json { render json: @topic.errors }
+        end
       end
     end
 
