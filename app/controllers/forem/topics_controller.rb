@@ -59,16 +59,22 @@ module Forem
     end
 
     def subscribe
-      if find_topic
-        @topic.subscribe_user(forem_user.id)
-        subscribe_successful
+      respond_to do |format|
+        if find_topic
+          @topic.subscribe_user(forem_user.id)
+          format.html { subscribe_successful }
+          format.json { render json: { message: "Subscribed"} }
+        end
       end
     end
 
     def unsubscribe
-      if find_topic
-        @topic.unsubscribe_user(forem_user.id)
-        unsubscribe_successful
+      respond_to do |format|
+        if find_topic
+          @topic.unsubscribe_user(forem_user.id)
+          format.html { unsubscribe_successful }
+          format.json { render json: { message: "Unsubscribed" } }
+        end
       end
     end
 
