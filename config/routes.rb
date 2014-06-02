@@ -1,5 +1,6 @@
 Forem::Engine.routes.draw do
-  root :to => "forums#index", format: true, defaults: { :format => 'html' }
+
+  root :to => "forums#index"
 
   # resources :topics, :only => [:new, :create, :index, :show, :destroy] do
   #   resources :posts
