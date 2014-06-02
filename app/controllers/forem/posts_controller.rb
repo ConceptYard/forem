@@ -67,7 +67,8 @@ module Forem
     end
 
     def latest_posts
-      @posts = Forem::Post.all.limit(100).sort_by(&:updated_at).reverse.paginate(:page => params[:page], :per_page => 5)
+      @posts = Forem::Post.all.limit(100).sort_by(&:updated_at).reverse
+      @paginated_posts = Kaminari.paginate_array(@posts).page(params[:page]).per(10)
       respond_to do |format|
         format.html
         format.json { render json: @posts }
