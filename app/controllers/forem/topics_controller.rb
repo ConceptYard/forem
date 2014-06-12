@@ -12,7 +12,7 @@ module Forem
         @posts = find_posts(@topic)
 
         # Kaminari allows to configure the method and param used
-        @posts = @posts.send(pagination_method, params[pagination_param]).per(Forem.per_page)
+        @posts = @posts.send(pagination_method, params[pagination_param]).per(10)
       end
 
       respond_to do |format|
@@ -75,6 +75,17 @@ module Forem
           format.html { unsubscribe_successful }
           format.json { render json: { message: "Unsubscribed" } }
         end
+      end
+    end
+
+    def post_count
+      if find_topic
+        count = find_posts(@topic).count
+      else
+        count = 0
+      end
+      respond_to do |format|
+        format.json { render json: { message: count }}
       end
     end
 

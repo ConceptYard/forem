@@ -8,6 +8,8 @@ Forem::Engine.routes.draw do
 
   get 'latest_posts', to: 'posts#latest_posts'
 
+  get 'post_count/:forum_id/:id', to: 'topics#post_count'
+
   resources :categories, :only => [:index, :show]
 
   namespace :admin do
