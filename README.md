@@ -1,4 +1,4 @@
-![Forem - using Bootstrap](https://github.com/radar/forem/raw/master/doc/theme.png)
+![Forem - using Bootstrap](https://raw.githubusercontent.com/radar/forem/rails4/doc/theme.png)
 
 *Forem, using the forem-bootstrap theme*
 
@@ -227,10 +227,7 @@ If all the tests are passing (they usually are), then you're good to go! Develop
 
 ## Places using Forem
 
-* [Bias Project](http://biasproject.org)
 * [Alabama Intel](http://alabamaintel.com)
-* [PixieEngine](http://pixieengine.com/community)
-* [2012 Presidential Election](http://www.2012-presidential-election.info/network/)
 * [Huntington's Disease Youth Organization](http://hdyo.org/)
 * [Miniand Tech](https://www.miniand.com/forums)
 * [Goodsmiths](https://www.goodsmiths.com/hub)
