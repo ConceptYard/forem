@@ -7,19 +7,17 @@ module Forem
     before_filter :block_spammers, :only => [:new, :create]
 
     def show
-      @posts = []
       if find_topic
         register_view(@topic, forem_user)
         @posts = find_posts(@topic)
 
         # Kaminari allows to configure the method and param used
         @posts = @posts.send(pagination_method, params[pagination_param]).per(10)
+        respond_to do |format|
+          format.html
+          format.json { render json: @posts }
+        end
       end
-      respond_to do |format|
-        format.html
-        format.json { render json: @posts and return }
-      end
-
     end
 
     def new
@@ -159,7 +157,7 @@ module Forem
       if forem_user.forem_spammer?
         flash[:alert] = t('forem.general.flagged_for_spam') + ' ' +
             t('forem.general.cannot_create_topic')
-        redirect_to :back
+        redirect_to :back and return
       end
     end
 
