@@ -7,22 +7,17 @@ module Forem
     before_filter :block_spammers, :only => [:new, :create]
 
     def show
+      @posts = []
       if find_topic
         register_view(@topic, forem_user)
         @posts = find_posts(@topic)
 
         # Kaminari allows to configure the method and param used
         @posts = @posts.send(pagination_method, params[pagination_param]).per(10)
-        respond_to do |format|
-          format.html
-          format.json { render json: @posts}
-        end
-      else
-        @posts = []
-        respond_to do |format|
-          format.html
-          format.json { render json: @posts}
-        end
+      end
+      respond_to do |format|
+        format.html
+        format.json { render json: @posts and return }
       end
 
     end
@@ -55,7 +50,7 @@ module Forem
         if forem_user == @topic.user || forem_user.forem_admin?
           if @topic.destroy
             format.html { destroy_successful }
-            format.json { render json: { message: "Topic Deleted" } }
+            format.json { render json: {message: "Topic Deleted"} }
           else
             format.html { destroy_unsuccessful }
             format.json { render json: @topic.errors }
@@ -69,7 +64,7 @@ module Forem
         if find_topic
           @topic.subscribe_user(forem_user.id)
           format.html { subscribe_successful }
-          format.json { render json: { message: "Subscribed"} }
+          format.json { render json: {message: "Subscribed"} }
         end
       end
     end
@@ -79,7 +74,7 @@ module Forem
         if find_topic
           @topic.unsubscribe_user(forem_user.id)
           format.html { unsubscribe_successful }
-          format.json { render json: { message: "Unsubscribed" } }
+          format.json { render json: {message: "Unsubscribed"} }
         end
       end
     end
@@ -91,7 +86,7 @@ module Forem
         count = 0
       end
       respond_to do |format|
-        format.json { render json: { message: count }}
+        format.json { render json: {message: count} }
       end
     end
 
@@ -100,7 +95,7 @@ module Forem
     def topic_params
       params.require(:topic).permit(:subject, :posts_attributes => [[:text]])
     end
-    
+
     def create_successful
       redirect_to [@forum, @topic], :notice => t("forem.topic.created")
     end
@@ -163,7 +158,7 @@ module Forem
     def block_spammers
       if forem_user.forem_spammer?
         flash[:alert] = t('forem.general.flagged_for_spam') + ' ' +
-                        t('forem.general.cannot_create_topic')
+            t('forem.general.cannot_create_topic')
         redirect_to :back
       end
     end
