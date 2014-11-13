@@ -11,7 +11,7 @@ module Forem
       if last_post.nil?
         'No Discussions'
       else
-        scope.forem_name
+        scope.name
       end
     end
 
