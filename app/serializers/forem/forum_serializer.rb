@@ -15,13 +15,13 @@ module Forem
       end
     end
 
-    # def last_post_date
-    #   last_post = object.last_post_for(scope)
-    #   if last_post.nil?
-    #     ''
-    #   else
-    #     "#{distance_of_time_in_words(last_post.created_at, Time.now)} ago"
-    #   end
-    # end
+    def last_post_date
+      last_post = object.last_post_for(scope)
+      if last_post.nil?
+        ''
+      else
+        "#{distance_of_time_in_words(last_post.created_at, Time.now)} ago"
+      end
+    end
   end
 end
